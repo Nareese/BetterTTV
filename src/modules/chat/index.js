@@ -11,6 +11,7 @@ const nicknames = require('../chat_nicknames');
 const channelEmotesTip = require('../channel_emotes_tip');
 const legacySubscribers = require('../legacy_subscribers');
 const splitChat = require('../split_chat');
+const newUser = require('../new_user_style');
 
 const EMOTE_STRIP_SYMBOLS_REGEX = /(^[~!@#$%\^&\*\(\)]+|[~!@#$%\^&\*\(\)]+$)/g;
 const MENTION_REGEX = /^@([a-zA-Z\d_]+)$/;
@@ -193,6 +194,7 @@ class ChatModule {
         if ($element[0].__bttvParsed) return;
 
         splitChat.render($element);
+        newUser.render($element, messageObj);
 
         const user = formatChatUser(messageObj);
         if (!user) return;
