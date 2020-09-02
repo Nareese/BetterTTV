@@ -11,3 +11,7 @@
 .bttv-hide-followed-offline {
   display: none !important;
 }
+
+.bttv-hide-similarity-channels {
+  display: none !important;
+}

@@ -5,6 +5,7 @@ const domObserver = require('../../observers/dom');
 
 let removeFeaturedChannelsListener;
 let removeOfflineFollowedChannelsListener;
+let removeSimilarityChannelsListener;
 
 class HideSidebarElementsModule {
     constructor() {
@@ -32,15 +33,23 @@ class HideSidebarElementsModule {
             defaultValue: false,
             description: 'Removes offline followed channels in the sidebar'
         });
+        settings.add({
+            id: 'hideSimilarityChannels',
+            name: 'Hide Viewers Also Watch Channels',
+            defaultValue: false,
+            description: 'Removes Viewers Also Watch channels in the sidebar'
+        });
         settings.on('changed.hideFeaturedChannels', () => this.toggleFeaturedChannels());
         settings.on('changed.autoExpandChannels', () => this.toggleAutoExpandChannels());
         settings.on('changed.hideRecommendedFriends', () => this.toggleRecommendedFriends());
         settings.on('changed.hideOfflineFollowedChannels', () => this.toggleOfflineFollowedChannels());
+        settings.on('changed.hideSimilarityChannels', () => this.toggleSimilarityChannels());
         watcher.on('load', () => {
             this.toggleFeaturedChannels();
             this.toggleAutoExpandChannels();
             this.toggleRecommendedFriends();
             this.toggleOfflineFollowedChannels();
+            this.toggleSimilarityChannels();
         });
     }
 
@@ -91,6 +100,24 @@ class HideSidebarElementsModule {
         removeOfflineFollowedChannelsListener();
         removeOfflineFollowedChannelsListener = undefined;
         $('.side-nav-card').removeClass('bttv-hide-followed-offline');
+    }
+
+    toggleSimilarityChannels() {
+        if (settings.get('hideSimilarityChannels')) {
+            if (removeSimilarityChannelsListener) return;
+
+            removeSimilarityChannelsListener = domObserver.on('.side-nav-section a[data-test-selector="similarity-channel"]', (node, isConnected) => {
+                if (!isConnected) return;
+                $(node).addClass('bttv-hide-similarity-channels');
+            }, {useParentNode: true});
+            return;
+        }
+
+        if (!removeSimilarityChannelsListener) return;
+
+        removeSimilarityChannelsListener();
+        removeSimilarityChannelsListener = undefined;
+        $('.side-nav-section').removeClass('bttv-hide-similarity-channels');
     }
 }
 
